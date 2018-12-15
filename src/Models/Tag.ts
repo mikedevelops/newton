@@ -1,7 +1,8 @@
-import { model, Schema } from 'mongoose';
+import { prop, Typegoose } from 'typegoose';
 
-const tag = new Schema({
-    name: { type: String, required: true }
-});
+export class Tag extends Typegoose {
+    @prop()
+    name: string;
+}
 
-export default model('Tag', tag);
+export const TagModel = new Tag().getModelForClass(Tag);

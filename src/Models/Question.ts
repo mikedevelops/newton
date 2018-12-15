@@ -1,10 +1,17 @@
-import { Schema, model } from 'mongoose';
-import { ObjectID } from 'bson';
+import { prop, Typegoose } from 'typegoose';
+import { Answer } from './Answer';
+import { Tag } from './Tag';
+import { Utterance } from './Utterance';
 
-const question = new Schema({
-    answers: [{ type: ObjectID, ref: 'Answer' }],
-    tags: [{ type: ObjectID, ref: 'Tag', required: true }],
-    utterances: [{ type: String, required: true }]
-});
+export class Question extends Typegoose {
+    @prop()
+    answers: Answer[];
 
-export default model('Question', question);
+    @prop()
+    tags: Tag[];
+
+    @prop()
+    utterances: Utterance[];
+}
+
+export const QuestionModel = new Question().getModelForClass(Question);
