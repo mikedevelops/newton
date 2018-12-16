@@ -137,13 +137,20 @@ async function save (entityCollectionFactory, entityPersister) {
 }
 
 (async function () {
+    // Clear database
+    await QuestionModel.collection.drop();
+    await AnswerModel.collection.drop();
+    await TagModel.collection.drop();
+
     // Compose entity functions
     const saveTags = await save(createEntities.bind(null, createTag, cli.flags.tags), saveEntities);
     const saveQuestions = await save(createEntities.bind(null, createQuestion, cli.flags.questions), saveEntities);
 
-    // Create and save tags
+    // Create and save Tags
     const savedTags = await saveTags();
-    const savedQuestions = await saveQuestions(savedTags);
+
+    // Create and save Questions & Answers
+    await saveQuestions(savedTags);
 
     process.exit(1);
 })();
