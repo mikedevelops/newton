@@ -1,10 +1,10 @@
 import { createRequest } from 'node-mocks-http';
-import { buildPaginatedResponse, parsePaginationQuery } from '../../src/Utilities/pagination';
+import { buildPaginatedResponse, parsePaginationQuery } from '../../../src/Utilities/pagination';
 import { Model } from 'mongoose';
-import { Question, QuestionModel } from '../../src/Models/Question';
-import { Answer, AnswerModel } from '../../src/Models/Answer';
-import { Tag, TagModel } from '../../src/Models/Tag';
-import { Utterance, UtteranceModel } from '../../src/Models/Utterance';
+import { Question, QuestionModel } from '../../../src/Models/Question';
+import { Answer, AnswerModel } from '../../../src/Models/Answer';
+import { Tag, TagModel } from '../../../src/Models/Tag';
+import { Utterance, UtteranceModel } from '../../../src/Models/Utterance';
 
 describe('Pagination Utilities', () => {
     describe('parsePaginationQuery', () => {

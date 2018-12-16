@@ -4,6 +4,8 @@ import statusRouter from './Routes/status';
 import tagRouter from './Routes/tags';
 import { connect } from 'mongoose';
 import dotenv from 'dotenv';
+import bodyParser = require('body-parser');
+import { logRequest } from './Middleware/logging';
 
 // Load env config
 dotenv.config();
@@ -27,8 +29,10 @@ connect(db, { useNewUrlParser: true })
         logger.error(`"${db}" ${message}`);
     });
 
-application.use(statusRouter());
-application.use(tagRouter());
+application.use(bodyParser.json());
+application.use(logRequest(logger));
+application.use(statusRouter);
+application.use(tagRouter);
 
 application.listen(PORT, () => {
     logger.info(`API Server listening on ${PORT}`);

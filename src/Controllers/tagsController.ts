@@ -15,15 +15,32 @@ export const getTags = async (request: Request, response: Response) => {
     const { limit, offset } = parsePaginationQuery(request, PAGINATED_TAGS_LIMIT);
     let tags;
 
-    logger.debug(`url: ${request.url} limit: ${limit} offset: ${offset}`);
-
     try {
-        tags = await TagModel
-            .find({}, {}, { skip: offset, limit: limit });
+        tags = await TagModel.find({}, {}, { skip: offset, limit: limit });
     } catch (err) {
         logger.error(err.message);
         response.sendStatus(INTERNAL_SERVER_ERROR);
     }
 
     response.json(buildPaginatedResponse(tags, limit, offset, request.url));
+};
+
+/**
+ * POST Tags
+ * @param request
+ * @param response
+ */
+export const postTags = async (request: Request, response: Response) => {
+    const tag = new TagModel({
+        name: request.body.name
+    });
+
+    try {
+        await tag.save();
+    } catch (err) {
+        logger.error(err.message);
+        response.sendStatus(INTERNAL_SERVER_ERROR);
+    }
+
+    response.json(tag);
 };

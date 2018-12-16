@@ -2,7 +2,7 @@
 
 const meow = require('meow');
 const mongoose = require('mongoose');
-const faker = require('faker');
+const { boundCreateAndSaveQuestions, boundCreateAndSaveTags } = require('../dist/Utilities/fixtures');
 
 const cli = meow(`   
     Options
@@ -61,81 +61,6 @@ mongoose.connect(
     { useNewUrlParser: true })
     .catch(({ message }) => { throw new Error(message) });
 
-async function createTag () {
-    return new TagModel({ name: faker.commerce.department() });
-}
-
-function randomInRange (min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getUniqueRandomIndices (collection, amount) {
-    const indices = [];
-    const max = amount >= collection.length ? collection.length : amount;
-
-    for (let index = 0; index < max; index++) {
-        const getRandomIndex = randomInRange.bind(this, 0, collection.length - 1);
-        let randomIndex;
-
-        do {
-            randomIndex = getRandomIndex();
-        } while (indices.indexOf(randomIndex) !== -1);
-
-        indices.push(randomIndex);
-    }
-
-    return indices;
-}
-
-async function createUtterance () {
-    return new UtteranceModel({ text: faker.lorem.sentence() });
-}
-
-function createAnswer () {
-    return new AnswerModel({ text: faker.lorem.paragraph() });
-}
-
-async function createEntities (factory, count, ...args) {
-    const entities = [];
-
-    for (let index = 0; index < count; index++) {
-        entities.push(await factory.apply(null, args));
-    }
-
-    return entities;
-}
-
-async function createQuestion (tags) {
-    const questionUtterances = await createEntities(createUtterance, randomInRange(1, 20));
-    const questionTags = getUniqueRandomIndices(tags, randomInRange(1, 5)).map(index => tags[index]);
-    const answer = await createAnswer().save();
-
-    return new QuestionModel({
-        tags: questionTags.map(t => t._id),
-        utterances: questionUtterances.map(q => q._id),
-        answers: [answer._id]
-    });
-}
-
-async function saveEntities (entityCollection) {
-    let entities = [];
-
-    for (let index = 0; index < entityCollection.length; index++) {
-        entities.push(await entityCollection[index].save());
-    }
-
-    return entities;
-}
-
-async function save (entityCollectionFactory, entityPersister) {
-    return async (...factoryArgs) => {
-        return await entityPersister(await entityCollectionFactory.apply(null, factoryArgs));
-    }
-}
-
 (async function () {
     // Clear database
     await QuestionModel.collection.drop();
@@ -143,14 +68,16 @@ async function save (entityCollectionFactory, entityPersister) {
     await TagModel.collection.drop();
 
     // Compose entity functions
-    const saveTags = await save(createEntities.bind(null, createTag, cli.flags.tags), saveEntities);
-    const saveQuestions = await save(createEntities.bind(null, createQuestion, cli.flags.questions), saveEntities);
+    const saveTags = await boundCreateAndSaveTags(cli.flags.tags);
+    const saveQuestions = await boundCreateAndSaveQuestions(cli.flags.questions);
 
-    // Create and save Tags
+    // Create and createAndSaveEntities Tags
     const savedTags = await saveTags();
 
-    // Create and save Questions & Answers
+    // Create and createAndSaveEntities Questions & Answers
     await saveQuestions(savedTags);
+
+    await mongoose.disconnect();
 
     process.exit(1);
 })();

@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import URL, { UrlObjectCommon } from 'url';
+import URL from 'url';
 import { InstanceType } from 'typegoose';
 import { IPaginatedResponse } from '../Interfaces/IPaginatedResponse';
 
