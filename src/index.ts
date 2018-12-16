@@ -1,22 +1,34 @@
 import express from 'express';
 import winston from 'winston';
-import testRoute from './Routes/statusRoute';
+import statusRouter from './Routes/status';
+import tagRouter from './Routes/tags';
 import { connect } from 'mongoose';
+import dotenv from 'dotenv';
 
-const application = express();
-const PORT = process.env.port || 8123;
-const logger = winston.createLogger({
+// Load env config
+dotenv.config();
+
+export const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
     transports: [ new winston.transports.Console({ format: winston.format.simple() }) ]
 });
 
-connect('mongodb://localhost:27018/local')
+const application = express();
+const PORT = process.env.port || 8123;
+const { DB_USER, DB_PASS, DB_HOST, DB_NAME } = process.env;
+const db = `mongodb://${DB_USER}:${DB_PASS}@${DB_HOST}/${DB_NAME}`;
+
+connect(db, { useNewUrlParser: true })
+    .then(() => {
+        logger.info(`Connected to "${db}"`);
+    })
     .catch(({ name , message }) => {
-        logger.error(message);
+        logger.error(`"${db}" ${message}`);
     });
 
-application.use(testRoute());
+application.use(statusRouter());
+application.use(tagRouter());
 
 application.listen(PORT, () => {
     logger.info(`API Server listening on ${PORT}`);
