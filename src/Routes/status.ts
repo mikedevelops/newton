@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import statusController from '../Controllers/statusController';
+import { getStatus } from '../Controllers/statusController';
 
 // @ts-ignore
 const newRouter = new Router();
 
 export default (router: Router = newRouter) => {
-    router.get('/status', statusController);
+    router.get('/status', getStatus);
 
     return router;
 };

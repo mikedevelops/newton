@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { OK } from 'http-status-codes';
 
 /**
- * Status Controller
+ * GET Status
  * @param request
  * @param response
  */
-export default (request: Request, response: Response) => {
+export const getStatus = (request: Request, response: Response) => {
     return response.sendStatus(OK);
 };
