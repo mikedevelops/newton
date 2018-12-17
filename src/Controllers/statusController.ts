@@ -8,7 +8,7 @@ import { OK, SERVICE_UNAVAILABLE } from 'http-status-codes';
  * @param response
  */
 export const getApiStatus = (request: Request, response: Response) => {
-    return response.sendStatus(OK);
+    response.sendStatus(OK);
 };
 
 /**
@@ -18,5 +18,6 @@ export const getApiStatus = (request: Request, response: Response) => {
  */
 export const getDatabaseStatus = (request: Request, response: Response) => {
     const status = mongoose.connection.readyState === 1 ? OK : SERVICE_UNAVAILABLE;
-    return response.sendStatus(status);
+
+    response.sendStatus(status);
 };
