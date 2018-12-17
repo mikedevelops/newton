@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 import bodyParser = require('body-parser');
 import { logRequest } from './Middleware/logging';
 
-// Load env config
 dotenv.config();
 
 export const logger = winston.createLogger({
@@ -31,8 +30,8 @@ connect(db, { useNewUrlParser: true })
 
 application.use(bodyParser.json());
 application.use(logRequest(logger));
-application.use(statusRouter);
-application.use(tagRouter);
+application.use(statusRouter());
+application.use(tagRouter());
 
 application.listen(PORT, () => {
     logger.info(`API Server listening on ${PORT}`);
