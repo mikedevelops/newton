@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { getTag, getTags, createTag, updateTag } from '../Controllers/tagsController';
+import { createResource, getPaginatedResources, getResource, updateResource } from '../Controllers/resourceController';
+import { TagModel } from '../Models/Tag';
 
 export default (router: Router = Router()) => {
-    router.get('/tags', getTags);
-    router.get('/tags/:tag_id', getTag);
-    router.post('/tags', createTag);
-    router.put('/tags/:tag_id', updateTag);
+    router.get('/tags', getPaginatedResources.bind(null, TagModel));
+    router.get('/tags/:resource_id', getResource.bind(null, TagModel));
+    router.post('/tags', createResource.bind(null, TagModel));
+    router.put('/tags/:resource_id', updateResource.bind(null, TagModel));
 
     return router;
 };
