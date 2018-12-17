@@ -7,10 +7,10 @@ export class Question extends Typegoose {
     @prop()
     answers: Answer[];
 
-    @prop()
+    @prop({ required: true })
     tags: Tag[];
 
-    @prop()
+    @prop({ required: true })
     utterances: Utterance[];
 }
 

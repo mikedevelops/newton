@@ -1,7 +1,7 @@
 import { prop, Typegoose } from 'typegoose';
 
 export class Answer extends Typegoose {
-    @prop()
+    @prop({ required: true })
     text: string;
 }
 

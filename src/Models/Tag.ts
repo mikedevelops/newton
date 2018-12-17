@@ -1,7 +1,7 @@
 import { prop, Typegoose } from 'typegoose';
 
 export class Tag extends Typegoose {
-    @prop()
+    @prop({ required: true })
     name: string;
 }
 
