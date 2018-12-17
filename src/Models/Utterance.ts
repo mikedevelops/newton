@@ -5,4 +5,8 @@ export class Utterance extends Typegoose {
     text: string;
 }
 
-export const UtteranceModel = new Utterance().getModelForClass(Utterance);
+export const UtteranceModel = new Utterance().getModelForClass(Utterance, {
+    schemaOptions: {
+        strict: 'throw'
+    }
+});

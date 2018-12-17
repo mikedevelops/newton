@@ -14,4 +14,8 @@ export class Question extends Typegoose {
     utterances: Utterance[];
 }
 
-export const QuestionModel = new Question().getModelForClass(Question);
+export const QuestionModel = new Question().getModelForClass(Question, {
+    schemaOptions: {
+        strict: 'throw'
+    }
+});

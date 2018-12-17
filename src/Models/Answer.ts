@@ -5,4 +5,8 @@ export class Answer extends Typegoose {
     text: string;
 }
 
-export const AnswerModel = new Answer().getModelForClass(Answer);
+export const AnswerModel = new Answer().getModelForClass(Answer, {
+    schemaOptions: {
+        strict: 'throw'
+    }
+});

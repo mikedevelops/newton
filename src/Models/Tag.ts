@@ -5,4 +5,8 @@ export class Tag extends Typegoose {
     name: string;
 }
 
-export const TagModel = new Tag().getModelForClass(Tag);
+export const TagModel = new Tag().getModelForClass(Tag, {
+    schemaOptions: {
+        strict: 'throw'
+    }
+});
