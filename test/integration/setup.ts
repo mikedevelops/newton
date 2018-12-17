@@ -6,6 +6,10 @@ beforeEach(async done => {
         return done();
     }
 
+    if (process.env.TEST_SUITE === undefined) {
+        return done();
+    }
+
     if (mongoose.connection.readyState === 0) {
         await mongoose.connect(`mongodb://localhost:27017/${process.env.TEST_SUITE}`, {
             useNewUrlParser: true
@@ -17,6 +21,10 @@ beforeEach(async done => {
 });
 
 afterEach(async done => {
+    if (process.env.TEST_SUITE === undefined) {
+        return done();
+    }
+
     await mongoose.disconnect();
     return done();
 });
