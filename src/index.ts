@@ -1,19 +1,13 @@
 import express from 'express';
-import winston from 'winston';
 import statusRouter from './Routes/status';
 import tagRouter from './Routes/tags';
 import { connect } from 'mongoose';
 import dotenv from 'dotenv';
 import bodyParser = require('body-parser');
 import { logRequest } from './Middleware/logging';
+import { logger } from './Services/logger';
 
 dotenv.config();
-
-export const logger = winston.createLogger({
-    level: 'debug',
-    format: winston.format.json(),
-    transports: [ new winston.transports.Console({ format: winston.format.simple() }) ]
-});
 
 const application = express();
 const PORT = process.env.port || 8123;

@@ -1,12 +1,10 @@
 import { Router } from 'express';
-import { getTags, postTags } from '../Controllers/tagsController';
+import { getTag, getTags, createTag } from '../Controllers/tagsController';
 
-// @ts-ignore
-const newRouter = new Router();
-
-export default (router: Router = newRouter) => {
+export default (router: Router = Router()) => {
     router.get('/tags', getTags);
-    router.post('/tags', postTags);
+    router.get('/tags/:tag_id', getTag);
+    router.post('/tags', createTag);
 
     return router;
 };
