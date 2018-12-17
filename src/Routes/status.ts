@@ -1,10 +1,7 @@
 import { Router } from 'express';
 import { getApiStatus, getDatabaseStatus } from '../Controllers/statusController';
 
-// @ts-ignore
-const newRouter = new Router();
-
-export default (router: Router = newRouter) => {
+export default (router: Router = Router()) => {
     router.get('/status/api', getApiStatus);
     router.get('/status/database', getDatabaseStatus);
 
