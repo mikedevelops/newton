@@ -51,21 +51,14 @@ const cli = meow(`
 });
 
 const { username, password, host, database } = cli.flags;
-const { QuestionModel } = require('../dist/Models/Question');
-const { AnswerModel } = require('../dist/Models/Answer');
-const { UtteranceModel } = require('../dist/Models/Utterance');
-const { TagModel } = require('../dist/Models/Tag');
-
-mongoose.connect(
-    `mongodb://${username}:${password}@${host}/${database}`,
-    { useNewUrlParser: true })
-    .catch(({ message }) => { throw new Error(message) });
 
 (async function () {
+    await mongoose.connect(
+    `mongodb://${username}:${password}@${host}/${database}`,
+    { useNewUrlParser: true });
+
     // Clear database
-    await QuestionModel.collection.drop();
-    await AnswerModel.collection.drop();
-    await TagModel.collection.drop();
+    await mongoose.connection.dropDatabase();
 
     // Compose entity functions
     const saveTags = await boundCreateAndSaveTags(cli.flags.tags);
@@ -78,6 +71,8 @@ mongoose.connect(
     await saveQuestions(savedTags);
 
     await mongoose.disconnect();
+
+    console.log(`Created ${cli.flags.tags} Tags and ${cli.flags.questions} Questions`);
 
     process.exit(1);
 })();
