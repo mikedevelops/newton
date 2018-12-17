@@ -12,7 +12,8 @@ beforeEach(async done => {
 
     if (mongoose.connection.readyState === 0) {
         await mongoose.connect(`mongodb://localhost:27017/${process.env.TEST_SUITE}`, {
-            useNewUrlParser: true
+            useNewUrlParser: true,
+            useFindAndModify: false
         });
         return clear();
     }
