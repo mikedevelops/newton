@@ -1,6 +1,6 @@
 import { createResponse } from 'node-mocks-http';
-import { createErrorResponse } from '../../../src/Utilities/response';
-import { NOT_FOUND } from 'http-status-codes';
+import { createErrorResponse, createResourceResponse } from '../../../src/Utilities/response';
+import { NOT_FOUND, OK } from 'http-status-codes';
 
 describe('Response Utilities', () => {
     describe('createErrorResponse', () => {
@@ -14,6 +14,21 @@ describe('Response Utilities', () => {
             expect(JSON.parse(response._getData())).toEqual({
                 status: NOT_FOUND,
                 message: message
+            });
+        });
+    });
+
+    describe('createResourceResponse', () => {
+        test('should create a resource response', () => {
+            const response = createResponse();
+            const result = [{ foo: 'bar' }];
+
+            createResourceResponse(response, result);
+
+            expect(response._getStatusCode()).toEqual(OK);
+            expect(JSON.parse(response._getData())).toEqual({
+                status: OK,
+                result: result
             });
         });
     });

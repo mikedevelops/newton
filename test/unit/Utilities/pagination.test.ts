@@ -1,5 +1,5 @@
 import { createRequest } from 'node-mocks-http';
-import { buildPaginatedResponse, parsePaginationQuery } from '../../../src/Utilities/pagination';
+import { createPaginatedResponse, parsePaginationQuery } from '../../../src/Utilities/pagination';
 import { Model } from 'mongoose';
 import { Question, QuestionModel } from '../../../src/Models/Question';
 import { Answer, AnswerModel } from '../../../src/Models/Answer';
@@ -83,7 +83,7 @@ describe('Pagination Utilities', () => {
         });
     });
 
-    describe('buildPaginatedResponse', () => {
+    describe('createPaginatedResponse', () => {
         const questions: Question[] = [];
 
         beforeEach(() => {
@@ -100,7 +100,7 @@ describe('Pagination Utilities', () => {
             const limit = 10;
             const offset = 5;
 
-            expect(buildPaginatedResponse(questions, limit, offset, 'foo/bar')).toEqual({
+            expect(createPaginatedResponse(questions, limit, offset, 'foo/bar')).toEqual({
                 limit: limit,
                 offset: offset,
                 results: questions,
@@ -114,7 +114,7 @@ describe('Pagination Utilities', () => {
             const offset = 5;
             const subset = questions.slice(0, 5);
 
-            expect(buildPaginatedResponse(subset, limit, offset, 'foo/bar')).toEqual({
+            expect(createPaginatedResponse(subset, limit, offset, 'foo/bar')).toEqual({
                 limit: limit,
                 offset: offset,
                 results: subset,
