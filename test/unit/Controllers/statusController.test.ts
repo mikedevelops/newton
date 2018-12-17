@@ -5,6 +5,8 @@ import mongoose from 'mongoose';
 
 process.env.TEST_SUITE = 'status-controller';
 
+// TODO: Mock DB to make this a true unit test
+
 describe('Status Controller', () => {
     describe('getApiStatus', () => {
         test('should return an OK status code', () => {

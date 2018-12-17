@@ -1,21 +1,20 @@
 import { createRequest, createResponse } from 'node-mocks-http';
-import { boundCreateAndSaveTags } from '../../../src/Utilities/fixtures';
 import {
     createResource,
     getPaginatedResources,
     getResource,
     updateResource
 } from '../../../src/Controllers/resourceController';
-import { Tag, TagModel } from '../../../src/Models/Tag';
+import { Tag, TagModel } from '../../../src/Resources/Tag';
 import { Document, Model } from 'mongoose';
-import { IPaginatedResponse } from '../../../src/Interfaces/IPaginatedResponse';
 import { ObjectID } from 'bson';
-import { BAD_REQUEST, NOT_FOUND, OK } from 'http-status-codes';
 import { InstanceType } from 'typegoose';
 import * as responseUtilities from '../../../src/Utilities/response';
 import * as paginationUtilities from '../../../src/Utilities/pagination';
 
 process.env.TEST_SUITE = 'resource-controller';
+
+// TODO: Mock DB to make this a true unit test
 
 describe('Resource Controller', () => {
     let createErrorResponseSpy: jest.SpyInstance;
