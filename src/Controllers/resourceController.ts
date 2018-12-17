@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { InstanceType } from 'typegoose';
 import { logger } from '../Services/logger';
 import { createErrorResponse, createResourceResponse } from '../Utilities/response';
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from 'http-status-codes';
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from 'http-status-codes';
 
 export const PAGINATED_RESOURCE_LIMIT = 20;
 
@@ -23,12 +23,16 @@ export const getPaginatedResources = async (ResourceModel: Model<any>, request: 
         resources = await ResourceModel.find({}, {}, { skip: offset, limit: limit });
     } catch (err) {
         logger.error(err.message);
-        createErrorResponse(response, INTERNAL_SERVER_ERROR, err.message);
+        response
+            .status(INTERNAL_SERVER_ERROR)
+            .json(createErrorResponse(INTERNAL_SERVER_ERROR, err.message));
 
         return;
     }
 
-    createPaginatedResponse(response, resources, limit, offset, request.url);
+    response
+        .status(OK)
+        .json(createPaginatedResponse(resources, OK, limit, offset, request.url));
 };
 
 /**
@@ -45,21 +49,27 @@ export const getResource = async (ResourceModel: Model<any>, request: Request, r
         resource = await ResourceModel.findOne({ _id: resource_id });
     } catch (err) {
         logger.error(err.message);
-        createErrorResponse(response, INTERNAL_SERVER_ERROR, err.message);
+        response
+            .status(INTERNAL_SERVER_ERROR)
+            .json(createErrorResponse(INTERNAL_SERVER_ERROR, err.message));
 
         return;
     }
 
     if (resource === null) {
-        createErrorResponse(
-            response, NOT_FOUND,
-            `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`
-        );
+        response
+            .status(NOT_FOUND)
+            .json(createErrorResponse(
+                 NOT_FOUND,
+                `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`
+            ));
 
         return;
     }
 
-    createResourceResponse(response, resource);
+    response
+        .status(OK)
+        .json(createResourceResponse(OK, resource));
 };
 
 /**
@@ -82,12 +92,16 @@ export const createResource = async (ResourceModel: Model<any>, request: Request
         }
 
         logger.error(err.message);
-        createErrorResponse(response, status, err.message);
+        response
+            .status(status)
+            .json(createErrorResponse(status, err.message));
 
         return;
     }
 
-    createResourceResponse(response, resource);
+    response
+        .status(OK)
+        .json(createResourceResponse(OK, resource));
 };
 
 /**
@@ -112,10 +126,14 @@ export const updateResource = async (ResourceModel: Model<any>, request: Request
         }
 
         logger.error(err.message);
-        createErrorResponse(response, status, err.message);
+        response
+            .status(status)
+            .json(createErrorResponse(status, err.message));
 
         return;
     }
 
-    createResourceResponse(response, resource);
+    response
+        .status(OK)
+        .json(createResourceResponse(OK, resource));
 };

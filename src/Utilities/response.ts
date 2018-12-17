@@ -1,30 +1,21 @@
-import { Response } from 'express';
-import { OK } from 'http-status-codes';
 import { IErrorResponse } from '../Interfaces/IErrorResponse';
 import { IResourceResponse } from '../Interfaces/IResourceResponse';
 
 /**
  * Create an error response from the API
- * @param response
  * @param status
  * @param message
  */
-export const createErrorResponse = (response: Response, status: number, message: string) => {
-    const body: IErrorResponse = { status, message };
-
-    response.status(status);
-    response.json(body);
+export const createErrorResponse = (status: number, message: string): IErrorResponse => {
+    return { status, message };
 };
 
 /**
  * Create a resource response
- * @param response
+ * @param status
  * @param result
  */
-export const createResourceResponse = (response: Response, result: any) => {
-    const body: IResourceResponse = { result, status: OK };
-
-    response.status(OK);
-    response.json(body);
+export const createResourceResponse = (status: number, result: any): IResourceResponse => {
+    return { result, status };
 };
 

@@ -1,10 +1,12 @@
-import { createRequest } from 'node-mocks-http';
+import { createRequest, createResponse } from 'node-mocks-http';
 import { createPaginatedResponse, parsePaginationQuery } from '../../../src/Utilities/pagination';
 import { Model } from 'mongoose';
 import { Question, QuestionModel } from '../../../src/Models/Question';
 import { Answer, AnswerModel } from '../../../src/Models/Answer';
 import { Tag, TagModel } from '../../../src/Models/Tag';
 import { Utterance, UtteranceModel } from '../../../src/Models/Utterance';
+import { IM_A_TEAPOT } from 'http-status-codes';
+import { IPaginatedResponse } from '../../../src/Interfaces/IPaginatedResponse';
 
 describe('Pagination Utilities', () => {
     describe('parsePaginationQuery', () => {
@@ -92,34 +94,44 @@ describe('Pagination Utilities', () => {
                 const tag: Tag = new TagModel({ name: 'tag' });
                 const utterance: Utterance = new UtteranceModel({ text: 'utterance' });
 
-                questions.push(new QuestionModel({ answer, tag, utterance }));
+                questions.push(new QuestionModel({
+                    answers: [answer],
+                    tags: [tag],
+                    utterances: [utterance]
+                }));
             }
         });
 
         test('should return a paginated response', () => {
             const limit = 10;
             const offset = 5;
-
-            expect(createPaginatedResponse(questions, limit, offset, 'foo/bar')).toEqual({
-                limit: limit,
-                offset: offset,
-                results: questions,
+            const status = IM_A_TEAPOT;
+            const expected: IPaginatedResponse = {
+                limit,
+                offset,
+                status,
+                result: questions,
                 size: questions.length,
                 next: 'foo/bar?limit=10&offset=15'
-            });
+            };
+
+            expect(createPaginatedResponse(questions, status, limit, offset, 'foo/bar')).toEqual(expected);
         });
 
         test('should omit a next key if we did not get all our results', () => {
             const limit = 10;
             const offset = 5;
             const subset = questions.slice(0, 5);
-
-            expect(createPaginatedResponse(subset, limit, offset, 'foo/bar')).toEqual({
-                limit: limit,
-                offset: offset,
-                results: subset,
+            const status = IM_A_TEAPOT;
+            const expected: IPaginatedResponse = {
+                limit,
+                offset,
+                status,
+                result: subset,
                 size: subset.length
-            });
+            };
+
+            expect(createPaginatedResponse(subset, status, limit, offset, 'foo/bar')).toEqual(expected);
         });
     });
 });

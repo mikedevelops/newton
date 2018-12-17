@@ -1,8 +1,7 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import URL from 'url';
 import { InstanceType } from 'typegoose';
 import { IPaginatedResponse } from '../Interfaces/IPaginatedResponse';
-import { OK } from 'http-status-codes';
 
 /**
  * Parse pagination parameters from a request
@@ -32,26 +31,27 @@ export const parsePaginationQuery = (
 
 /**
  * Build a paginated response object
- * @param response
  * @param results
+ * @param status
  * @param limit
  * @param offset
  * @param request
  */
 export const createPaginatedResponse = (
-    response: Response,
     results: InstanceType<any>[],
+    status: number,
     limit: number,
     offset: number,
     request: string
-) => {
+): IPaginatedResponse => {
     const url = URL.parse(request);
     const count: number = results.length;
     const body: IPaginatedResponse = {
         limit: limit,
-        results: results,
+        result: results,
         size: count,
-        offset: offset
+        offset: offset,
+        status: status
     };
 
     // Add next link if we got all of our records
@@ -59,5 +59,5 @@ export const createPaginatedResponse = (
         body.next = `${url.pathname}?limit=${limit}&offset=${offset + limit}`;
     }
 
-    response.status(OK).json(body);
+    return body;
 };

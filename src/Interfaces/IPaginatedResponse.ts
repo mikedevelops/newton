@@ -1,9 +1,8 @@
-import { InstanceType } from 'typegoose';
+import { IResourceResponse } from './IResourceResponse';
 
-export interface IPaginatedResponse {
+export interface IPaginatedResponse extends IResourceResponse {
     next?: string;
     limit: number;
-    results: InstanceType<any>[];
     size: number;
     offset: number;
 }
