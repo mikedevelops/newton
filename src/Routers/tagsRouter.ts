@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createResource, getPaginatedResources, getResource, updateResource } from '../Controllers/resourceController';
-import { TagModel } from '../Models/Tag';
+import { TagModel } from '../Resources/Tag';
 
 export default (router: Router = Router()) => {
     router.get('/tags', getPaginatedResources.bind(null, TagModel));

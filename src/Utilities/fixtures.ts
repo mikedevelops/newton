@@ -1,8 +1,8 @@
 import { InstanceType } from 'typegoose';
-import { QuestionModel } from '../Models/Question';
-import { UtteranceModel } from '../Models/Utterance';
-import { TagModel } from '../Models/Tag';
-import { AnswerModel } from '../Models/Answer';
+import { QuestionModel } from '../Resources/Question';
+import { UtteranceModel } from '../Resources/Utterance';
+import { TagModel } from '../Resources/Tag';
+import { AnswerModel } from '../Resources/Answer';
 import faker from 'faker';
 import { getUniqueRandomIndices } from './array';
 import { randomInRange } from './number';
