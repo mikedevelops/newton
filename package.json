@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run test:lint  && npm run test:integration",
     "test:lint": "tslint --config tslint.json --project '.'",
-    "test:integration": "DYNAMIC_PORT=true jest --testMatch=\"**/test/integration/**/status.test.ts\" --config=jest.config.js --setupTestFrameworkScriptFile=./test/integration/setup.ts --runInBand --forceExit",
+    "test:integration": "DYNAMIC_PORT=true jest --testMatch=\"**/test/integration/**/*.test.ts\" --setupTestFrameworkScriptFile=./test/integration/setup.ts --config=jest.config.js --runInBand",
     "test:unit": "DYNAMIC_PORT=true jest --testMatch=\"**/test/unit/**/*.test.ts\" --config=jest.config.js --setupTestFrameworkScriptFile=./test/integration/setup.ts --forceExit",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",

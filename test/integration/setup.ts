@@ -1,46 +1,35 @@
 import mongoose from 'mongoose';
+import request, { SuperTest } from 'supertest';
+import { application, server } from '../../src';
+import { connectToDatabase } from '../../src/Services/database';
 import { logger } from '../../src/Services/logger';
 
-async function clear (done: jest.DoneCallback) {
-    await mongoose.connection.dropDatabase();
-    return done();
-}
+export let app: SuperTest<any>;
 
-beforeEach(async done => {
-    if (process.env.TEST_SUITE === undefined) {
-        return done();
-    }
+// Suppress logs by default
+logger.transports[0].silent = process.env.TEST_LOGS !== 'true';
 
-    // logger.transports[0].silent = true;
-
-    // TODO: remove this debug
-    return done();
-
-    if (mongoose.connection.readyState === 0) {
-        const database = `mongodb://localhost:27019/${process.env.TEST_SUITE}`;
-
-        await mongoose.connect(database, {
-            useNewUrlParser: true,
-            useFindAndModify: false
-        });
-
-        logger.info(`Connected to ${database}`);
-
-        return clear(done);
-    }
-
-    return clear(done);
+// start server before all tests
+beforeAll(async (done) => {
+    // @ts-ignore
+    app = await request(application);
+    application.on('ready', done);
 });
 
-afterEach(async done => {
-    if (process.env.TEST_SUITE === undefined) {
-        return done();
+beforeEach(async () => {
+    // Ensure database is connected before each test,
+    // some test might want to disconnect to assert errors
+    if (mongoose.connection.readyState === 0) {
+        await connectToDatabase();
     }
 
-    // TODO: remove this debug
-    return done();
+    // Drop database before each test so the database to ensure tests are idempotent
+    await mongoose.connection.dropDatabase();
+});
 
-    await clear(done);
+afterAll(async () => {
+    // disconnect from database
     await mongoose.disconnect();
-    return done();
+    // close server
+    await server.close();
 });
