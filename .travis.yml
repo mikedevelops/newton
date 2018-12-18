@@ -3,4 +3,4 @@ node_js:
   - "10"
 services: mongodb
 before_script:
-  - mongo newton --eval 'db.createUser({user:"newton",pwd:"newton",roles:[{role:"readWrite", db:"newton"}]});
+  - mongo newton --eval 'db.createUser({user:"newton",pwd:"newton",roles:[{role:"readWrite", db:"newton"}]});'
