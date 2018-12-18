@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --verbose",
+    "test": "npm run test:lint && npm run test:unit && npm run test:integration",
+    "test:lint": "tslint --config tslint.json --project '.'",
+    "test:integration": "DYNAMIC_PORT=true jest --testMatch=\"**/test/integration/**/*.test.ts\" --config=jest.config.js --coverage --setupTestFrameworkScriptFile=./test/integration/setup.ts --runInBand --forceExit",
+    "test:unit": "DYNAMIC_PORT=true jest --testMatch=\"**/test/unit/**/*.test.ts\" --config=jest.config.js --coverage --setupTestFrameworkScriptFile=./test/integration/setup.ts --forceExit",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
     "watch:serve": "nodemon ./dist/index.js",
