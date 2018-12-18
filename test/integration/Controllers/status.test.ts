@@ -7,16 +7,18 @@ process.env.TEST_SUITE = 'integration_status';
 
 describe('GET /status/api', () => {
     test('should get status', async () => {
-        await request(application)
-            .get('/status/api')
+        const test = await request(application);
+
+        test.get('/status/api')
             .expect(OK);
     });
 });
 
 describe('GET /status/database', () => {
     test('should get happy status', async () => {
-        await request(application)
-            .get('/status/database')
+        const test = await request(application);
+
+        test.get('/status/database')
             .expect(OK);
     });
 

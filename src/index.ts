@@ -14,20 +14,24 @@ const PORT = process.env.DYNAMIC_PORT ? 0 : process.env.PORT || 8123;
 const { DB_USER, DB_PASS, DB_HOST, DB_NAME } = process.env;
 const db = `mongodb://${DB_USER}:${DB_PASS}@${DB_HOST}/${DB_NAME}`;
 
-mongoose.connect(db, { useNewUrlParser: true, useFindAndModify: false })
-    .then(() => {
-        logger.info(`Connected to "${db}"`);
-    })
-    .catch(({ name , message }) => {
-        logger.error(`"${db}" ${message}`);
+(async function () {
+    logger.debug(`Attempting to connect to database "${db}"`);
+
+    try {
+        await mongoose.connect(db, { useNewUrlParser: true, useFindAndModify: false });
+        logger.info(`Connected to database "${db}"`);
+    } catch (err) {
+        logger.error(err.message);
+        throw new Error(err);
+    }
+
+    application.use(bodyParser.json());
+    application.use(logRequest(logger));
+    application.use(statusRouter());
+    application.use(tagRouter());
+
+    application.listen(PORT, () => {
+        logger.info(`API Server listening on ${PORT}`);
     });
-
-application.use(bodyParser.json());
-application.use(logRequest(logger));
-application.use(statusRouter());
-application.use(tagRouter());
-
-application.listen(PORT, () => {
-    logger.info(`API Server listening on ${PORT}`);
-});
+})();
 
