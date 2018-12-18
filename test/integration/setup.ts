@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { logger } from '../../src/Services/logger';
 
 async function clear (done: jest.DoneCallback) {
     await mongoose.connection.dropDatabase();
@@ -10,11 +11,17 @@ beforeEach(async done => {
         return done();
     }
 
+    logger.transports[0].silent = true;
+
     if (mongoose.connection.readyState === 0) {
-        await mongoose.connect(`mongodb://localhost:27017/${process.env.TEST_SUITE}`, {
+        const database = `mongodb://localhost:27017/${process.env.TEST_SUITE}`;
+        await mongoose.connect(database, {
             useNewUrlParser: true,
             useFindAndModify: false
         });
+
+        logger.info(`Connected to ${database}`);
+
         return clear(done);
     }
 
