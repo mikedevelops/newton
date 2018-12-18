@@ -5,6 +5,7 @@ import { InstanceType } from 'typegoose';
 import { logger } from '../Services/logger';
 import { createErrorResponse, createResourceResponse } from '../Utilities/response';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from 'http-status-codes';
+import { createResourceNotfoundMessage } from '../Utilities/errors';
 
 export const PAGINATED_RESOURCE_LIMIT = 20;
 
@@ -57,7 +58,7 @@ export const getResource = async (ResourceModel: Model<any>, request: Request, r
     }
 
     if (resource === null) {
-        const message = `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`;
+        const message = createResourceNotfoundMessage(ResourceModel, resource_id);
 
         logger.error(message);
         response
@@ -82,8 +83,7 @@ export const createResource = async (ResourceModel: Model<any>, request: Request
     let resource;
 
     try {
-        resource = new ResourceModel(request.body);
-        await resource.save();
+        resource = await ResourceModel.create(request.body);
     } catch (err) {
         let status = INTERNAL_SERVER_ERROR;
 
@@ -126,7 +126,7 @@ export const updateResource = async (ResourceModel: Model<any>, request: Request
     }
 
     if (resource === null) {
-        const message = `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`;
+        const message = createResourceNotfoundMessage(ResourceModel, resource_id);
 
         logger.error(message);
         response
@@ -181,7 +181,7 @@ export const removeResource = async (ResourceModel: Model<any>, request: Request
     }
 
     if (resource === null) {
-        const message = `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`;
+        const message = createResourceNotfoundMessage(ResourceModel, resource_id);
 
         logger.error(message);
         response
