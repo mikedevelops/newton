@@ -5,8 +5,6 @@ import { Document } from 'mongoose';
 import { ObjectID } from 'bson';
 import { TagModel } from '../../../src/Resources/Tag';
 
-process.env.TEST_SUITE = 'integration_tags';
-
 describe('GET /tags', () => {
     test('should get tags', async () => {
         await request(application)

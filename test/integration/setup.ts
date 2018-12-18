@@ -13,8 +13,12 @@ beforeEach(async done => {
 
     logger.transports[0].silent = true;
 
+    // TODO: remove this debug
+    return done();
+
     if (mongoose.connection.readyState === 0) {
-        const database = `mongodb://localhost:27017/${process.env.TEST_SUITE}`;
+        const database = `mongodb://localhost:27019/${process.env.TEST_SUITE}`;
+
         await mongoose.connect(database, {
             useNewUrlParser: true,
             useFindAndModify: false
@@ -32,6 +36,9 @@ afterEach(async done => {
     if (process.env.TEST_SUITE === undefined) {
         return done();
     }
+
+    // TODO: remove this debug
+    return done();
 
     await clear(done);
     await mongoose.disconnect();
