@@ -87,7 +87,7 @@ export const createResource = async (ResourceModel: Model<any>, request: Request
     } catch (err) {
         let status = INTERNAL_SERVER_ERROR;
 
-        if (err.name === 'StrictModeError') {
+        if (err.name === 'ValidationError' || err.name === 'StrictModeError') {
             status = BAD_REQUEST;
         }
 
@@ -116,6 +116,27 @@ export const updateResource = async (ResourceModel: Model<any>, request: Request
 
     try {
         resource = await ResourceModel.findOne({ _id: resource_id });
+    } catch (err) {
+        logger.error(err.message);
+        response
+            .status(INTERNAL_SERVER_ERROR)
+            .json(createErrorResponse(INTERNAL_SERVER_ERROR, err.message));
+
+        return;
+    }
+
+    if (resource === null) {
+        response
+            .status(NOT_FOUND)
+            .json(createErrorResponse(
+                NOT_FOUND,
+                `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`
+            ));
+
+        return;
+    }
+
+    try {
         resource.set({ ...request.body });
         await resource.save();
     } catch (err) {
