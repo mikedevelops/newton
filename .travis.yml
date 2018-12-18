@@ -2,5 +2,3 @@ language: node_js
 node_js:
   - "10"
 services: mongodb
-before_script:
-  - mongo newton --eval 'db.createUser({user:"newton",pwd:"newton",roles:[{role:"readWrite", db:"newton"}]});'
