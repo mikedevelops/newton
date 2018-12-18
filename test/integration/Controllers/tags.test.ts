@@ -4,10 +4,8 @@ import { BAD_REQUEST, NOT_FOUND, OK } from 'http-status-codes';
 import { Document } from 'mongoose';
 import { ObjectID } from 'bson';
 import { TagModel } from '../../../src/Resources/Tag';
-import { logger } from '../../../src/Services/logger';
 
 process.env.TEST_SUITE = 'integration_tags';
-logger.transports[0].silent = true;
 
 describe('GET /tags', () => {
     test('should get tags', async () => {
