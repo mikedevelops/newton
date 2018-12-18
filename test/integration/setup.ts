@@ -11,7 +11,7 @@ beforeEach(async done => {
         return done();
     }
 
-    logger.transports[0].silent = true;
+    // logger.transports[0].silent = true;
 
     // TODO: remove this debug
     return done();
