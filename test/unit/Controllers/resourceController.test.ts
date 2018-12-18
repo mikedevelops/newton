@@ -12,7 +12,7 @@ import { InstanceType } from 'typegoose';
 import * as responseUtilities from '../../../src/Utilities/response';
 import * as paginationUtilities from '../../../src/Utilities/pagination';
 
-process.env.TEST_SUITE = 'resource-controller';
+process.env.TEST_SUITE = 'resource_controller';
 
 // TODO: Mock DB to make this a true unit test
 
@@ -25,7 +25,6 @@ describe('Resource Controller', () => {
         createErrorResponseSpy = jest.spyOn(responseUtilities, 'createErrorResponse');
         createResourceResponseSpy = jest.spyOn(responseUtilities, 'createResourceResponse');
         createPaginatedResponseSpy = jest.spyOn(paginationUtilities, 'createPaginatedResponse');
-        Date.now = jest.fn((() => 591836400000));
     });
 
     afterEach(() => {

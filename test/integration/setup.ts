@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
-beforeEach(async done => {
-    async function clear () {
-        await mongoose.connection.dropDatabase();
-        return done();
-    }
+async function clear (done: jest.DoneCallback) {
+    await mongoose.connection.dropDatabase();
+    return done();
+}
 
+beforeEach(async done => {
     if (process.env.TEST_SUITE === undefined) {
         return done();
     }
@@ -15,10 +15,10 @@ beforeEach(async done => {
             useNewUrlParser: true,
             useFindAndModify: false
         });
-        return clear();
+        return clear(done);
     }
 
-    return clear();
+    return clear(done);
 });
 
 afterEach(async done => {
@@ -26,6 +26,7 @@ afterEach(async done => {
         return done();
     }
 
+    await clear(done);
     await mongoose.disconnect();
     return done();
 });

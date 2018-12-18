@@ -10,7 +10,7 @@ import { logger } from './Services/logger';
 dotenv.config();
 
 export const application = express();
-const PORT = process.env.PORT || 8123;
+const PORT = process.env.DYNAMIC_PORT ? 0 : process.env.PORT || 8123;
 const { DB_USER, DB_PASS, DB_HOST, DB_NAME } = process.env;
 const db = `mongodb://${DB_USER}:${DB_PASS}@${DB_HOST}/${DB_NAME}`;
 

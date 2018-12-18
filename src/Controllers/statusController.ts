@@ -13,11 +13,12 @@ export const getApiStatus = (request: Request, response: Response) => {
 
 /**
  * Get database connection status
+ * @param connection
  * @param request
  * @param response
  */
-export const getDatabaseStatus = (request: Request, response: Response) => {
-    const status = mongoose.connection.readyState === 1 ? OK : SERVICE_UNAVAILABLE;
+export const getDatabaseStatus = (connection: mongoose.Connection, request: Request, response: Response) => {
+    const status = connection.readyState === 1 ? OK : SERVICE_UNAVAILABLE;
 
     response.sendStatus(status);
 };
