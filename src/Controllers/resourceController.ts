@@ -57,12 +57,12 @@ export const getResource = async (ResourceModel: Model<any>, request: Request, r
     }
 
     if (resource === null) {
+        const message = `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`;
+
+        logger.error(message);
         response
             .status(NOT_FOUND)
-            .json(createErrorResponse(
-                 NOT_FOUND,
-                `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`
-            ));
+            .json(createErrorResponse(NOT_FOUND, message));
 
         return;
     }
@@ -126,12 +126,12 @@ export const updateResource = async (ResourceModel: Model<any>, request: Request
     }
 
     if (resource === null) {
+        const message = `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`;
+
+        logger.error(message);
         response
             .status(NOT_FOUND)
-            .json(createErrorResponse(
-                NOT_FOUND,
-                `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`
-            ));
+            .json(createErrorResponse(NOT_FOUND, message));
 
         return;
     }
@@ -150,6 +150,54 @@ export const updateResource = async (ResourceModel: Model<any>, request: Request
         response
             .status(status)
             .json(createErrorResponse(status, err.message));
+
+        return;
+    }
+
+    response
+        .status(OK)
+        .json(createResourceResponse(OK, resource));
+};
+
+/**
+ * Remove a single resource
+ * @param ResourceModel
+ * @param request
+ * @param response
+ */
+export const removeResource = async (ResourceModel: Model<any>, request: Request, response: Response) => {
+    const { resource_id } = request.params;
+    let resource: InstanceType<Model<any>>;
+
+    try {
+        resource = await ResourceModel.findOne({ _id: resource_id });
+    } catch (err) {
+        logger.error(err.message);
+        response
+            .status(INTERNAL_SERVER_ERROR)
+            .json(createErrorResponse(INTERNAL_SERVER_ERROR, err.message));
+
+        return;
+    }
+
+    if (resource === null) {
+        const message = `Could not find resource "${ResourceModel.modelName}" with ID "${resource_id}"`;
+
+        logger.error(message);
+        response
+            .status(NOT_FOUND)
+            .json(createErrorResponse(NOT_FOUND, message));
+
+        return;
+    }
+
+    try {
+        await resource.remove();
+    } catch (err) {
+        logger.error(err.message);
+        response
+            .status(INTERNAL_SERVER_ERROR)
+            .json(createErrorResponse(INTERNAL_SERVER_ERROR, err.message));
 
         return;
     }

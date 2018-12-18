@@ -78,3 +78,27 @@ describe('PUT /tags/:tag_id', () => {
         expect(body.result.name).toEqual(name);
     });
 });
+
+describe('DELETE /tags/:tag_id', () => {
+    test('should handle not found', async () => {
+        await request(application)
+            .delete(`/tags/${new ObjectID('000000000000')}`)
+            .expect(NOT_FOUND);
+    });
+
+    test('should remove a tag and return it', async () => {
+        const name = 'My Tag to be deleted';
+        const tag = await (new TagModel({ name })).save();
+
+        const { body } = await request(application)
+            .delete(`/tags/${tag._id}`)
+            .expect(OK);
+
+        expect(tag._id.equals(body.result._id)).toBeTruthy();
+        expect(body.result.name).toEqual(name);
+
+        const deletedTag = await TagModel.findOne({ _id: tag._id });
+
+        expect(deletedTag).toBeNull();
+    });
+});
