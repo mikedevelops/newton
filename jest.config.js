@@ -13,6 +13,6 @@ module.exports = {
     },
     testEnvironment: 'node',
     preset: 'ts-jest',
-    coverageReporters: ['json']
+    coverageReporters: ['lcov']
 }
 
