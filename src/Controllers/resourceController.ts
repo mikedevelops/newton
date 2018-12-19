@@ -6,6 +6,7 @@ import { logger } from '../Services/logger';
 import { createErrorResponse, createResourceResponse } from '../Utilities/response';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from 'http-status-codes';
 import { createResourceNotfoundMessage } from '../Utilities/errors';
+import { getReferenceFields } from '../Utilities/model';
 
 export const PAGINATED_RESOURCE_LIMIT = 20;
 
@@ -19,9 +20,12 @@ export const getPaginatedResources = async (ResourceModel: Model<any>, request: 
     const { limit, offset } = parsePaginationQuery(request, PAGINATED_RESOURCE_LIMIT);
 
     let resources;
+    const referenceFields = getReferenceFields(ResourceModel.schema);
 
     try {
-        resources = await ResourceModel.find({}, {}, { skip: offset, limit: limit });
+        resources = await ResourceModel
+            .find({}, {}, { skip: offset, limit: limit })
+            .populate(referenceFields.join(' '));
     } catch (err) {
         logger.error(err.message);
         response

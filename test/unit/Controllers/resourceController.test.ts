@@ -36,9 +36,11 @@ describe('Resource Controller', () => {
 
     describe('getPaginatedResources', () => {
         let TagModelFindSpy: jest.SpyInstance;
+        let TagModelPopulateSpy: jest.SpyInstance;
 
         beforeEach(() => {
             TagModelFindSpy = jest.spyOn(TagModel, 'find');
+            TagModelPopulateSpy = jest.spyOn(TagModel, 'populate');
         });
 
         afterEach(() => {
@@ -55,7 +57,8 @@ describe('Resource Controller', () => {
                 url: 'foo',
             });
 
-            TagModelFindSpy.mockImplementation(async () => tags.slice(offset, limit));
+            TagModelFindSpy.mockImplementation(() => TagModel);
+            TagModelPopulateSpy.mockImplementation(async () => tags.slice(offset, limit));
             parsePaginationQuerySpy.mockImplementation(() => ({ limit, offset }));
 
             await getPaginatedResources(TagModel, request, response);
