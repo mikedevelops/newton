@@ -2,12 +2,8 @@ import mongoose from 'mongoose';
 import request, { SuperTest } from 'supertest';
 import { application, server } from '../../src';
 import { connectToDatabase } from '../../src/Services/database';
-import { logger } from '../../src/Services/logger';
 
 export let app: SuperTest<any>;
-
-// Suppress logs by default
-logger.transports[0].silent = process.env.TEST_LOGS !== 'true';
 
 // start server before all tests
 beforeAll(async (done) => {
