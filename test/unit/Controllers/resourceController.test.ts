@@ -2,7 +2,7 @@ import { createRequest, createResponse } from 'node-mocks-http';
 import {
     createResource,
     getPaginatedResources,
-    getResource,
+    getResource, removeResource,
     updateResource
 } from '../../../src/Controllers/resourceController';
 import { TagModel } from '../../../src/Resources/Tag';
@@ -10,10 +10,10 @@ import { Document, Model } from 'mongoose';
 import * as responseUtilities from '../../../src/Utilities/response';
 import * as paginationUtilities from '../../../src/Utilities/pagination';
 import * as errorUtilities from '../../../src/Utilities/errors';
-import { createResourceNotfoundMessage } from '../../../src/Utilities/errors';
 import { createEntities, createTag } from '../../../src/Utilities/fixtures';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from 'http-status-codes';
 import { ObjectID } from 'bson';
+import { createErrorResponse } from '../../../src/Utilities/response';
 
 describe('Resource Controller', () => {
     let createErrorResponseSpy: jest.SpyInstance;
@@ -145,11 +145,12 @@ describe('Resource Controller', () => {
         test('should handle no resource found', async () => {
             const response = createResponse();
             const error = 'Something went wrong';
+            const id = new ObjectID('000000000000');
             const request = createRequest({
                 method: 'GET',
                 url: 'foo',
                 params: {
-                    'resource_id': new ObjectID('000000000000')
+                    'resource_id': id
                 }
             });
 
@@ -158,6 +159,7 @@ describe('Resource Controller', () => {
 
             await getResource(TagModel, request, response);
 
+            expect(createResourceNotFoundMessageSpy).toHaveBeenCalledWith(TagModel, id);
             expect(createErrorResponseSpy).toHaveBeenCalledWith(NOT_FOUND, error);
             expect(response._getStatusCode()).toEqual(NOT_FOUND);
         });
@@ -226,6 +228,24 @@ describe('Resource Controller', () => {
 
             expect(createErrorResponseSpy).toHaveBeenCalledWith(BAD_REQUEST, error.message);
             expect(response._getStatusCode()).toEqual(BAD_REQUEST);
+        });
+
+        test('should handle an unknown error', async () => {
+            const error = new Error('Something went wrong');
+            const response = createResponse();
+            const request = createRequest({
+                method: 'POST',
+                url: 'foo'
+            });
+
+            tagModelCreateSpy.mockImplementation(() => {
+                throw error;
+            });
+
+            await createResource(TagModel, request, response);
+
+            expect(createErrorResponseSpy).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR, error.message);
+            expect(response._getStatusCode()).toEqual(INTERNAL_SERVER_ERROR);
         });
     });
 
@@ -383,6 +403,121 @@ describe('Resource Controller', () => {
 
             expect(createErrorResponseSpy).toHaveBeenCalledWith(BAD_REQUEST, error.message);
             expect(response._getStatusCode()).toEqual(BAD_REQUEST);
+        });
+    });
+
+    describe('removeResource', () => {
+        let tagModelFindOneSpy: jest.SpyInstance;
+        let tagModelRemoveSpy: jest.SpyInstance;
+        let createResourceNotfoundMessageSpy: jest.SpyInstance;
+        let createErrorResponseSpy: jest.SpyInstance;
+        let createResourceResponse: jest.SpyInstance;
+
+        beforeEach(() => {
+            tagModelFindOneSpy = jest.spyOn(TagModel, 'findOne');
+            tagModelRemoveSpy = jest.spyOn(TagModel.prototype, 'remove');
+            createResourceNotfoundMessageSpy = jest.spyOn(errorUtilities, 'createResourceNotfoundMessage');
+            createErrorResponseSpy = jest.spyOn(responseUtilities, 'createErrorResponse');
+            createResourceResponse = jest.spyOn(responseUtilities, 'createResourceResponse');
+        });
+
+        afterEach(() => {
+            tagModelFindOneSpy.mockClear();
+            tagModelRemoveSpy.mockClear();
+            createResourceNotfoundMessageSpy.mockClear();
+            createErrorResponseSpy.mockClear();
+            createErrorResponseSpy.mockClear();
+        });
+
+        test('should remove a resource and return it', async () => {
+            const tag = createTag();
+            const response = createResponse();
+            const request = createRequest({
+                method: 'DELETE',
+                url: 'foo',
+                params: {
+                    resource_id: tag._id
+                }
+            });
+
+            tagModelFindOneSpy.mockImplementation(async () => tag);
+            tagModelRemoveSpy.mockImplementation(async () => {});
+
+            await removeResource(TagModel, request, response);
+
+            expect(tagModelFindOneSpy).toHaveBeenCalledWith({ _id: tag._id });
+            expect(tagModelRemoveSpy).toHaveBeenCalled();
+            expect(response._getStatusCode()).toEqual(OK);
+            expect(createResourceResponseSpy).toHaveBeenCalledWith(OK, tag);
+        });
+
+        test('should handle an unknown error when finding a resource', async () => {
+            const tag = createTag();
+            const error = new Error('Something went wrong');
+            const response = createResponse();
+            const request = createRequest({
+                method: 'DELETE',
+                url: 'foo',
+                params: {
+                    resource_id: tag._id
+                }
+            });
+
+            tagModelFindOneSpy.mockImplementation(async () => {
+                throw error;
+            });
+
+            await removeResource(TagModel, request, response);
+
+            expect(response._getStatusCode()).toEqual(INTERNAL_SERVER_ERROR);
+            expect(createErrorResponseSpy).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR, error.message);
+        });
+
+        test('should handle the resource not being found', async () => {
+            const tag = createTag();
+            const error = new Error('Something went wrong');
+            const response = createResponse();
+            const request = createRequest({
+                method: 'DELETE',
+                url: 'foo',
+                params: {
+                    resource_id: tag._id
+                }
+            });
+
+            tagModelFindOneSpy.mockImplementation(async () => null);
+            createResourceNotfoundMessageSpy.mockImplementation(() => error.message);
+
+            await removeResource(TagModel, request, response);
+
+            expect(createResourceNotfoundMessageSpy).toHaveBeenCalledWith(TagModel, tag._id);
+            expect(createErrorResponseSpy).toHaveBeenCalledWith(NOT_FOUND, error.message);
+            expect(response._getStatusCode()).toEqual(NOT_FOUND);
+        });
+
+        test('should handle an unknown error removing a resource', async () => {
+            const tag = createTag();
+            const error = new Error('Something went wrong');
+            const response = createResponse();
+            const request = createRequest({
+                method: 'DELETE',
+                url: 'foo',
+                params: {
+                    resource_id: tag._id
+                }
+            });
+
+            tagModelFindOneSpy.mockImplementation(async () => tag);
+            tagModelRemoveSpy.mockImplementation(async () => {
+                throw error;
+            });
+
+            await removeResource(TagModel, request, response);
+
+            expect(tagModelFindOneSpy).toHaveBeenCalledWith({ _id: tag._id });
+            expect(tagModelRemoveSpy).toHaveBeenCalled();
+            expect(response._getStatusCode()).toEqual(INTERNAL_SERVER_ERROR);
+            expect(createErrorResponseSpy).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR, error.message);
         });
     });
 });
