@@ -1,16 +1,16 @@
-import { prop, Typegoose } from 'typegoose';
+import { arrayProp, Typegoose } from 'typegoose';
 import { Answer } from './Answer';
 import { Tag } from './Tag';
 import { Utterance } from './Utterance';
 
 export class Question extends Typegoose {
-    @prop()
+    @arrayProp({ itemsRef: Answer })
     answers: Answer[];
 
-    @prop({ required: true })
+    @arrayProp({ itemsRef: Tag, required: true })
     tags: Tag[];
 
-    @prop({ required: true })
+    @arrayProp({ itemsRef: Utterance, required: true })
     utterances: Utterance[];
 }
 
