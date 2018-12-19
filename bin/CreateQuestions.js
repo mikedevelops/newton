@@ -40,12 +40,12 @@ const cli = meow(`
         tags: {
             type: 'number',
             alias: 't',
-            default: 50
+            default: 20
         },
         questions: {
             type: 'number',
             alias: 'q',
-            default: 2
+            default: 10
         }
     }
 });
