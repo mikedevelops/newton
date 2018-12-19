@@ -1,6 +1,7 @@
 import express from 'express';
 import statusRouter from './Routers/statusRouter';
-import tagRouter from './Routers/tagsRouter';
+import tagRouter from './Routers/tagRouter';
+import questionRouter from './Routers/questionRouter';
 import dotenv from 'dotenv';
 import bodyParser = require('body-parser');
 import { logRequest } from './Middleware/logging';
@@ -21,6 +22,7 @@ const PORT = process.env.DYNAMIC_PORT ? 0 : process.env.PORT || 8123;
     application.use(logRequest(logger));
     application.use(statusRouter());
     application.use(tagRouter());
+    application.use(questionRouter());
 
     server.listen(PORT, () => {
         logger.info(`API Server listening on ${PORT}`);
