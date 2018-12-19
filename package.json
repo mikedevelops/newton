@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test:lint && node ./bin/DisableCoverageSummary && npm run test:integration -- --coverage && npm run test:unit -- --coverage && node ./bin/CombineCoverage.js",
+    "test": "npm run test:lint && node ./bin/DisableCoverageSummary && TEST=true npm run test:integration -- --coverage && TEST=true npm run test:unit -- --coverage && node ./bin/CombineCoverage.js",
     "test:lint": "tslint --config tslint.json --project '.'",
     "test:integration": "DYNAMIC_PORT=true jest --testMatch=\"**/test/integration/**/*.test.ts\" --setupTestFrameworkScriptFile=./test/integration/setup.ts --config=jest.config.js --runInBand",
     "test:unit": "jest --testMatch=\"**/test/unit/**/*.test.ts\" --config=jest.config.js",
