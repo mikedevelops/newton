@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test:lint  && npm run test:integration",
+    "test": "npm run test:lint && npm run test:integration -- --coverage && npm run test:unit -- --coverage && node ./bin/CombineCoverage.js",
     "test:lint": "tslint --config tslint.json --project '.'",
     "test:integration": "DYNAMIC_PORT=true jest --testMatch=\"**/test/integration/**/*.test.ts\" --setupTestFrameworkScriptFile=./test/integration/setup.ts --config=jest.config.js --runInBand",
-    "test:unit": "DYNAMIC_PORT=true jest --testMatch=\"**/test/unit/**/*.test.ts\" --config=jest.config.js --setupTestFrameworkScriptFile=./test/integration/setup.ts --forceExit",
+    "test:unit": "jest --testMatch=\"**/test/unit/**/*.test.ts\" --config=jest.config.js",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
     "watch:serve": "nodemon ./dist/index.js",
