@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Error Utilities createResourceNotfoundMessage should return the error message 1`] = `"Could not find resource \\"Tag\\" with ID \\"666\\""`;

@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "10"
+services: mongodb
+before_script:
+  - mongo newton_ci --eval 'db.createUser({user:"newton",pwd:"newton",roles:[{role:"readWrite", db:"newton_ci"}]});'
+
+env:
+  - DB_USER=newton DB_PASS=newton DB_HOST=localhost:27017 DB_NAME=newton_ci
