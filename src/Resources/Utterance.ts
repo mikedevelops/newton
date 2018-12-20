@@ -1,12 +1,7 @@
-import { prop, Typegoose } from 'typegoose';
+import mongoose, { Schema } from 'mongoose';
 
-export class Utterance extends Typegoose {
-    @prop({ required: true })
-    text: string;
-}
-
-export const UtteranceModel = new Utterance().getModelForClass(Utterance, {
-    schemaOptions: {
-        strict: 'throw'
-    }
+export const Utterance = new Schema({
+    text: { type: String, required: true }
 });
+
+export const UtteranceModel = mongoose.model('Utterance', Utterance);

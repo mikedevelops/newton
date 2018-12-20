@@ -1,21 +1,12 @@
-import { arrayProp, Typegoose } from 'typegoose';
 import { Answer } from './Answer';
-import { Tag } from './Tag';
 import { Utterance } from './Utterance';
+import { Tag } from './Tag';
+import mongoose, { Schema } from 'mongoose';
 
-export class Question extends Typegoose {
-    @arrayProp({ itemsRef: Answer })
-    answers: Answer[];
-
-    @arrayProp({ itemsRef: Tag, required: true })
-    tags: Tag[];
-
-    @arrayProp({ itemsRef: Utterance, required: true })
-    utterances: Utterance[];
-}
-
-export const QuestionModel = new Question().getModelForClass(Question, {
-    schemaOptions: {
-        strict: 'throw'
-    }
+const Question = new Schema({
+    answers: [{ type: Schema.Types.ObjectId, required: true, ref: 'Answer' }],
+    utterances: [{ type: Schema.Types.ObjectId, required: true, ref: 'Utterance' }],
+    tags: [{ type: Schema.Types.ObjectId, required: true, ref: 'Tag' }]
 });
+
+export const QuestionModel = mongoose.model('Question', Question);

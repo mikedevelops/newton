@@ -1,12 +1,7 @@
-import { prop, Typegoose } from 'typegoose';
+import mongoose, { Schema } from 'mongoose';
 
-export class Answer extends Typegoose {
-    @prop({ required: true })
-    text: string;
-}
-
-export const AnswerModel = new Answer().getModelForClass(Answer, {
-    schemaOptions: {
-        strict: 'throw'
-    }
+export const Answer = new Schema({
+    text: { type: String, required: true }
 });
+
+export const AnswerModel = mongoose.model('Answer', Answer);
