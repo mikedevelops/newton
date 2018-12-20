@@ -2,6 +2,7 @@ import { Answer } from './Answer';
 import { Utterance } from './Utterance';
 import { Tag } from './Tag';
 import mongoose, { Schema } from 'mongoose';
+import { validateAtLeastOneItem } from '../Validators/array';
 
 const Question = new Schema({
     answers: {
@@ -11,7 +12,8 @@ const Question = new Schema({
     utterances: {
         type: [Schema.Types.ObjectId],
         ref: 'Utterance',
-        required: true
+        required: true,
+        validate: validateAtLeastOneItem
     },
     tags: {
         type: [Schema.Types.ObjectId],
