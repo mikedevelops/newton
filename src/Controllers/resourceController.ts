@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { createPaginatedResponse, parsePaginationQuery } from '../Utilities/pagination';
 import { Model } from 'mongoose';
-import { InstanceType } from 'typegoose';
 import { logger } from '../Services/logger';
 import { createErrorResponse, createResourceResponse } from '../Utilities/response';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from 'http-status-codes';

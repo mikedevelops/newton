@@ -1,4 +1,3 @@
-import { InstanceType } from 'typegoose';
 import { QuestionModel } from '../Resources/Question';
 import { UtteranceModel } from '../Resources/Utterance';
 import { TagModel } from '../Resources/Tag';
@@ -6,6 +5,7 @@ import { AnswerModel } from '../Resources/Answer';
 import faker from 'faker';
 import { getUniqueRandomIndices } from './array';
 import { randomInRange } from './number';
+import { Model, Document } from 'mongoose';
 
 /**
  * Compose a createAndSaveEntities entity function
@@ -25,7 +25,7 @@ export const createAndSaveEntities = async (
  * Save entities
  * @param entityCollection
  */
-export const saveEntities = async (entityCollection: InstanceType<any>[]) => {
+export const saveEntities = async (entityCollection: Document[]) => {
     const entities = [];
 
     for (let index = 0; index < entityCollection.length; index++) {
@@ -44,7 +44,7 @@ export const saveEntities = async (entityCollection: InstanceType<any>[]) => {
  * @param args
  */
 export const createEntities = async (
-    factory: () => InstanceType<any>,
+    factory: () => Document,
     count: number,
     ...args: any[]
 ) => {
@@ -61,7 +61,7 @@ export const createEntities = async (
  * Create a Question
  * @param tags
  */
-export const createQuestion = async (tags: InstanceType<any>) => {
+export const createQuestion = async (tags: Document[]) => {
     const questionUtterances = await createEntities(createUtterance, randomInRange(1, 20));
     const questionTags = getUniqueRandomIndices(tags, randomInRange(1, 5)).map(index => tags[index]);
     const answer = await createAnswer().save();

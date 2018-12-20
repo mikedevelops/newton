@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import URL from 'url';
-import { InstanceType } from 'typegoose';
 import { IPaginatedResponse } from '../Interfaces/IPaginatedResponse';
+import { Document } from 'mongoose';
 
 /**
  * Parse pagination parameters from a request
@@ -38,7 +38,7 @@ export const parsePaginationQuery = (
  * @param request
  */
 export const createPaginatedResponse = (
-    results: InstanceType<any>[],
+    results: Document[],
     status: number,
     limit: number,
     offset: number,
